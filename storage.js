@@ -4,16 +4,16 @@
 	
 	//Common Function
 	var Until = {
-		isString = function(val){
+		isString : function(val){
 			return Object.prototype.toString.call(val) == '[object String]';
 		},
-		isFunction = function(val){
+		isFunction : function(val){
 			return Object.prototype.toString.call(val) == '[object Function]'; 
 		},
-		isNumber = function(val){
+		isNumber : function(val){
 			return Object.prototype.toString.call(val) == '[object Number]' 
 		},
-		isNumString = function(val){
+		isNumString : function(val){
 			if(this.isString(val)){
 				return /^[0-9]+$/.test(val);
 			}
@@ -58,20 +58,20 @@
 		},
 		setItem : function(name, value, fn) {
 			var self = this;
-			if(1 in arguments && isString(value)) {
+			if(1 in arguments && Until.isString(value)) {
 				 self.userDataEle.setAttribute(self.key_prefix + name, value);
 				 self.userDataEle.save(self.userDataName);
 			}
-			if(2 in arguments && isFunction(fn)){
+			if(2 in arguments && Until.isFunction(fn)){
 				fn(value);
 			}
 		},
 		getItem : function(name, fn) {
 			var self = this, result = '';
-			if(0 in arguments && isString(name)) {
+			if(0 in arguments && Until.isString(name)) {
 				result = self.userDataEle.getAttribute(self.key_prefix + name);
 			}
-			if(1 in arguments && isFunction(fn)) {
+			if(1 in arguments && Until.isFunction(fn)) {
 				setTimeout(function(){
 					fn(result);
 				},0);
@@ -80,11 +80,11 @@
 		},
 		removeItem : function(name, fn) {
 			var self = this;
-			if(0 in arguments && isString(name)) {
+			if(0 in arguments && Until.isString(name)) {
 				self.userDataEle.removeAttribute(self.key_prefix + name);	
 				self.userDataEle.save(self.userDataName);
 			}
-			if(1 in arguments && isFunction(fn)) {
+			if(1 in arguments && Until.isFunction(fn)) {
 				fn();
 			}
 		},
@@ -93,7 +93,7 @@
 			for(var i in self.attribute) {
 				self.removeItem(i);
 			}
-			if(1 in arguments){
+			if(1 in arguments && Until.isFunction(fn)){
 				fn();
 			}
 		}
@@ -102,7 +102,7 @@
 		init : function() {
 			var self = this;
 			if('localStorage' in window) {
-				self.localStorage = window.localStorage;
+				this.localStorage = window.localStorage;
 			} 
 		},
 		getItem : function(name, fn){
@@ -112,37 +112,43 @@
 				if(0 in arguments){
 					result = self.localStorage.getItem(name);
 				}
-				if(1 in arguments && isFunction(fn)){
+				if(1 in arguments && Until.isFunction(fn)){
 					fn(result);
 				}
-			}catch(){}
+			}catch(e){
+				console.log(e)
+			}
 			return result;
 		},
 		setItem : function(name, value, fn){
 			var self = this;
 			try{
-				if(1 in arguments && isString(value)){
+				if(1 in arguments && Until.isString(value)){
 					self.localStorage.setItem(name, value);
 				}
 				
-				if(2 in arguments && isFunction(fn)) {
+				if(2 in arguments && Until.isFunction(fn)) {
 					fn(value);
 				}
-			}catch(e){}
+			}catch(e){
+				console.log(e)
+			}
 		},
 		removeItem : function(name, fn){
 			var self = this;
 			try{
 				self.localStorage.removeItem(name);
-				if(1 in arguments && isFunction(fn)){
+				if(1 in arguments && Until.isFunction(fn)){
 					fn();
 				}
-			}catch(e){}
+			}catch(e){
+				console.log(e)
+			}
 		},
 		clear : function(fn){
 			var self = this;
 			self.localStorage.clear();
-			if(0 in arguments && isFunction(fn)){
+			if(0 in arguments && Until.isFunction(fn)){
 				fn();
 			}
 		},
@@ -150,22 +156,19 @@
 
 
 	//特性检测
+
 	try{
 		window.localStorage.setItem('localStorage', 'Test');
 		window.localStorage.removeItem('localStorage');
-		geekLS = new geekLS();
+		
 		geekLS.init();
 	}catch(e){
 		if(document.documentElement && document.documentElement.addBehavior){
-			geekLS = new userDataStorage();
+			geekLS = userDataStorage;
 			geekLS.init();
 		}
 	}
 
-
-	window.localStorage = geekLS;
-
-
-
+	window.geekLS = geekLS;
 
 })(window);
