@@ -90,8 +90,8 @@
 		},
 		clear : function(fn) {
 			var self = this;
-			for(var i in self.attribute) {
-				self.removeItem(i);
+			for(var key in self.attribute) {
+				self.removeItem(key);
 			}
 			if(1 in arguments && Until.isFunction(fn)){
 				fn();
@@ -147,7 +147,9 @@
 		},
 		clear : function(fn){
 			var self = this;
-			self.localStorage.clear();
+			for (var key in self.localStorage) {
+				self.removeItem(key);
+			};
 			if(0 in arguments && Until.isFunction(fn)){
 				fn();
 			}
@@ -160,7 +162,6 @@
 	try{
 		window.localStorage.setItem('localStorage', 'Test');
 		window.localStorage.removeItem('localStorage');
-		
 		geekLS.init();
 	}catch(e){
 		if(document.documentElement && document.documentElement.addBehavior){
@@ -168,7 +169,12 @@
 			geekLS.init();
 		}
 	}
-
-	window.geekLS = geekLS;
+	if(typeof define === 'function' && seajs){
+		define(function(require, exports, module){
+			module.exports = geekLS;
+		});
+	} else {
+		window.geekLS = geekLS;
+	}
 
 })(window);
