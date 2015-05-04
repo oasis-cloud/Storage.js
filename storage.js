@@ -171,7 +171,7 @@
 	}
 	if(typeof define === 'function' && seajs){
 		define(function(require, exports, module){
-			exports = geekLS;
+			module.exports = geekLS;
 		});
 	} else {
 		window.geekLS = geekLS;
